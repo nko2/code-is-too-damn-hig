@@ -1,5 +1,5 @@
-`require('nko')('YOe/SzwxAmx8J0UC'); // team code
-//export NODE_ENV=production`
+require('nko')('YOe/SzwxAmx8J0UC')
+#export NODE_ENV=production
 
 static = require 'node-static'
 http = require 'http'
