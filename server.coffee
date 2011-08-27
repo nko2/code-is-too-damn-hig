@@ -17,10 +17,8 @@ server.listen(port);
 console.log "Running http server at port #{port}"
 
 # Websockets Server
-websocket = io.listen(server)
+websocket_server = io.listen(server)
 
 
-websocket.sockets.on "connection", (socket)->
+websocket_server.sockets.on "connection", (socket)->
   console.log("Hello #{socket}")
-  socket.emit "message", "FUCKING PIECE OF SHIT"
-  socket.emit "news", "NEWS PIECE OF SHIT"
