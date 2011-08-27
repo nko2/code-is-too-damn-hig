@@ -1,6 +1,5 @@
 require.paths.unshift(__dirname+"/lib")
 require 'Connection'
-require "Redis"
 
 require('nko')('YOe/SzwxAmx8J0UC')
 #export NODE_ENV=production
@@ -11,7 +10,8 @@ io = require 'socket.io'
 redis = require 'redis'
 global.REDIS = redis.createClient()
 
-port = process.env.NODE_ENV == 'production' ? 80 : 7777
+port = 7777
+port = 80 if (process.env.NODE_ENV == 'production')
 
 # HTTP Server
 file = new static.Server('./public')
