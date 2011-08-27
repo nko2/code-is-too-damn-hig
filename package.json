@@ -1,16 +1,17 @@
 {
-  "name": "code-is-too-damn-high",
-  "description": "Boys over Flowers game",
-  "version": "0.0.0",
+  "name": "boys-over-flowers",
+  "description": "Boys over Flowers game, based on the hit series Boys over Flowers!",
+  "version": "0.0.1",
+  "homepage": "http://boys-over-flowers.no.de/",
   "repository": {
     "type": "git",
     "url": "git://github.com/nko2/code-is-too-damn-hig.git"
   },
-  "author": "Seivan, Albert, Balach",
+  "author": "Albert, Balach, Seivan",
   "directories": {
-    "lib": "node_modules"
+    "lib": "."
   },
   "engines": {
-    "node": "*"
+    "node": "0.4.10"
   }
 }
