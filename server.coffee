@@ -21,6 +21,6 @@ websocket = io.listen(server)
 
 
 websocket.sockets.on "connection", (socket)->
-  console.log("Hello #{socket}")
+  console.log "CONNECTION"
   socket.emit "message", "FUCKING PIECE OF SHIT"
   socket.emit "news", "NEWS PIECE OF SHIT"
