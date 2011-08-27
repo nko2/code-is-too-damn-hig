@@ -2,7 +2,7 @@ require './Player'
 
 class global.Connection
 
-  constructor: (@socket) ->
+  constructor: (@socket, @setup) ->
     
     @socket.on "disconnect", =>
       @player.logout()
@@ -12,16 +12,21 @@ class global.Connection
       @player.setName data, @validateName
       
     
-    
   
   validateName : (valid) =>
       if valid
-        @socket.emit("name", "true")
+        @socket.emit("setup", JSON.stringify([@setup, @player.join()]))
+        @socket.broadcast.emit("newPlayerJoined", JSON.stringify(@player.join()))
       else
         @socket.emit("name", "false")
     
 
 
+    
+
+
+  
+      
     
 
   

@@ -28,19 +28,12 @@ console.log "Running http server at port #{port}"
 # Websockets Server
 websocket_server = io.listen(server)
 
-players = []
+
+
 setup =  { timeLeft : 7, flowersOnMap : [[1,1], [3,3], [0,1], [1, 0]], players: [{ name: "Seivan", position: [10,10]}] }
 
 websocket_server.sockets.on "connection", (socket)->
-
-  connection = new Connection socket
-  
-  if connection.player
-    new_player = connection.player
-    if new_player.isValid
-      new_player.socket.emit("setup", JSON.stringify([setup, new_player.join()]))
-      socket.broadcast.emit("newPlayerJoined", JSON.stringify(new_player.join()))
-    
+  connection = new Connection socket, setup
   
 
   
