@@ -3,7 +3,7 @@
 VERSION="0.4.0"
 CONFIG=./deploy.conf
 LOG=/tmp/deploy.log
-TEST=1
+TEST=0
 REF=
 ENV=
 

@@ -11,7 +11,7 @@ io = require 'socket.io'
 redis = require 'redis'
 global.REDIS = redis.createClient()
 
-port = process.env.PORT || 7777
+port = process.env.NODE_ENV === 'production' ? 80 : 7777
 
 # HTTP Server
 file = new static.Server('./public')
