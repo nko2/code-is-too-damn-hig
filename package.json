@@ -1,0 +1,16 @@
+{
+  "name": "code-is-too-damn-high",
+  "description": "Boys over Flowers game",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nko2/code-is-too-damn-hig.git"
+  },
+  "author": "Seivan, Albert, Balach",
+  "directories": {
+    "lib": "node_modules"
+  },
+  "engines": {
+    "node": "*"
+  }
+}
