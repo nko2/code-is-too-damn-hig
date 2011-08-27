@@ -19,7 +19,11 @@ server = http.createServer (request, response) ->
   request.addListener 'end', ->
     file.serve(request, response);
 
-server.listen(port);
+server.listen port, () ->
+  if process.getuid() == 0
+    require('fs').stat __filename, (err, stats) ->
+      return console.log(err) if (err)
+      process.setuid(stats.uid)
 console.log "Running http server at port #{port}"
 
 # Websockets Server
