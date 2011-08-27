@@ -1,8 +1,14 @@
 `require('nko')('YOe/SzwxAmx8J0UC'); // team code
-export NODE_ENV=production
+//export NODE_ENV=production`
 
-var http = require('http');
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello World\n');
-}).listen(process.env.PORT || 7777);`
+static = require 'node-static'
+http = require 'http'
+
+file = new static.Server('./public')
+server = http.createServer (request, response) ->
+  request.addListener 'end', ->
+    file.serve(request, response);
+
+port = process.env.PORT || 7777
+server.listen(port);
+console.log "Running server at port #{port}"
