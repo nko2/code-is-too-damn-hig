@@ -10,11 +10,12 @@ http = require 'http'
 io = require 'socket.io'
 redis = require 'redis'
 global.REDIS = redis.createClient()
+REDIS.flushall()
 
-port = process.env.PORT || 7777
+port = process.env.PORT || 3000
 
 # HTTP Server
-file = new static.Server('./public')
+file = new static.Server('./public/')
 server = http.createServer (request, response) ->
   request.addListener 'end', ->
     file.serve(request, response);
@@ -22,9 +23,25 @@ server = http.createServer (request, response) ->
 server.listen(port);
 console.log "Running http server at port #{port}"
 
+
+
 # Websockets Server
 websocket_server = io.listen(server)
 
+players = []
+setup =  { timeLeft : 7, flowersOnMap : [[1,1], [3,3], [0,1], [1, 0]], players: [{ name: "Seivan", position: [10,10]}] }
 
 websocket_server.sockets.on "connection", (socket)->
-  new Connection(socket)
+
+  connection = new Connection socket
+  
+  if connection.player
+    new_player = connection.player
+    if new_player.isValid
+      new_player.socket.emit("setup", JSON.stringify([setup, new_player.join()]))
+      socket.broadcast.emit("newPlayerJoined", JSON.stringify(new_player.join()))
+    
+  
+
+  
+

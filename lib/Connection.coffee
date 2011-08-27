@@ -1,17 +1,28 @@
+require './Player'
+
 class global.Connection
+
   constructor: (@socket) ->
+    
     @socket.on "disconnect", =>
-      this.logout()
+      @player.logout()
+            
     @socket.on "name", (data) =>
-      this.setName data, (valid) =>
-        if valid
-          @socket.emit("name", "true")
-        else
-          @socket.emit("name", "false")
-  logout: ->
-    REDIS.srem "used_names", @name
-  setName: (name, cb) ->
-    @name = name
-    REDIS.sadd "used_names", name, (error, resp) =>
-      cb(parseInt(resp, 10) == 1)
+      @player = new Player(@socket)
+      @player.setName data, @validateName
       
+    
+    
+  
+  validateName : (valid) =>
+      if valid
+        @socket.emit("name", "true")
+      else
+        @socket.emit("name", "false")
+    
+
+
+    
+
+  
+    
