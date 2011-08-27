@@ -9,13 +9,17 @@ class global.Player
       if isValid 
         @name = name
         @valid = true
+        Map.instance().addPlayer(this)
       cb(isValid)
   
   setPosition: (data) =>
-    @position = data
+    @position = parseInt(i) for i in data
+    
   
   disconnected: () =>
-    if @name then REDIS.srem "player:names", @name
+    if @name 
+      REDIS.srem "player:names", @name
+      Map.instance().removePlayer(this)
     return @name
   
   

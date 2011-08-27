@@ -35,12 +35,8 @@ console.log "Running http server at port #{port}"
 # Websockets Server
 websocket_server = io.listen(server)
 
-
-
-setup =  { timeLeft : 7, flowersOnMap : [[1,1], [3,3], [0,1], [1, 0]], players: [{ name: "Seivan", position: [10,10]}] }
-
 websocket_server.sockets.on "connection", (socket)->
-  connection = new Connection socket, setup
+  connection = new Connection socket
   
 
   

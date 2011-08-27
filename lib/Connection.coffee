@@ -1,6 +1,6 @@
 class global.Connection
 
-  constructor: (@socket, @setup) ->
+  constructor: (@socket) ->
     
     @socket.on "disconnect", =>
       if @player then @socket.broadcast.emit("playerDisconnected", @player.disconnected())    
@@ -16,24 +16,11 @@ class global.Connection
     
   
   validateName : (valid) =>
-<<<<<<< Updated upstream
-      if valid
-        @socket.emit("setup", [@setup, @player.setup()])
-        @socket.broadcast.emit("playerJoined", @player.joined())
-      else
-        @socket.emit("setName", "false")
-    
-=======
     if valid
-      @socket.emit("setup", JSON.stringify([@setup, @player.join()]))
-      @socket.broadcast.emit("newPlayerJoined", JSON.stringify(@player.join()))
+      @socket.emit("setup", Map.instance().getSetupData())
+      @socket.broadcast.emit("playerJoined", @player.joined())
     else
-      @socket.emit("name", "false")
-
->>>>>>> Stashed changes
-
-
-    
+      @socket.emit("setName", "false")
 
 
   

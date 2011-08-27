@@ -1,27 +1,31 @@
 var socket = io.connect('/');
+var log = function(text){
+  $("#log ul").append($("<li>").html(text));
+}
 
 socket.on("name", function(data){
   if(data==="false"){
-    alert("You are not accepted!");
+    log("You are not accepted!");
   }
 });
 
 socket.on("setup", function(data){
-  alert("You joined!");
-  socket.emit("setPosition", prompt("Move to array ?"));
+  log("You joined!");
+  log("Received setup: "+ JSON.stringify(data));
+  socket.emit("setPosition", prompt("Move to array ?").split(","));
 });
 
 socket.on("playerJoined", function(data){
-  alert(data + " joined!");
+  log(data.name + " joined at "+data.position[0]+","+data.position[1]+"!");
 });
 
 socket.on("playerDisconnected", function(data){
-  alert(data + " left!");
+  log(data + " left!");
 });
 
 
 socket.on("playerMoved", function(data){
-  alert(data + " moved!");
+  log(data.name + " moved to "+data.position[0]+","+data.position[1]+"!");
 });
 
 
