@@ -1,7 +1,7 @@
 class global.Player
    
   constructor: (@socket) ->
-    
+    @position = [13,51]
   
   setName: (name, cb) ->
     REDIS.sadd "player:names", name, (error, resp) =>
@@ -10,14 +10,25 @@ class global.Player
         @name = name
         @valid = true
       cb(isValid)
-      
-
-  logout: () =>
+  
+  setPosition: (data) =>
+    @position = data
+  
+  disconnected: () =>
     if @name then REDIS.srem "player:names", @name
+    return @name
+  
+  
     
-  join: () =>
-    { name:@name, position:[11,11] }
+  info: () =>
     
+    { name:@name, position: @position }
+    
+  setup:  => @info()
+
+  joined: => @info()
+  
+  moved: => @info()
     
       
 

@@ -5,20 +5,24 @@ class global.Connection
   constructor: (@socket, @setup) ->
     
     @socket.on "disconnect", =>
-      @player.logout()
+      if @player then @socket.broadcast.emit("playerDisconnected", @player.disconnected())    
             
-    @socket.on "name", (data) =>
+    @socket.on "setName", (data) =>
       @player = new Player(@socket)
       @player.setName data, @validateName
+
+    @socket.on "setPosition", (data) =>
+      @player.setPosition(data)
+      @socket.broadcast.emit("playerMoved", @player.moved())
       
     
   
   validateName : (valid) =>
       if valid
-        @socket.emit("setup", JSON.stringify([@setup, @player.join()]))
-        @socket.broadcast.emit("newPlayerJoined", JSON.stringify(@player.join()))
+        @socket.emit("setup", [@setup, @player.setup()])
+        @socket.broadcast.emit("playerJoined", @player.joined())
       else
-        @socket.emit("name", "false")
+        @socket.emit("setName", "false")
     
 
 
