@@ -21,10 +21,9 @@ class global.Player
   
     
   info: () =>
-    
     { name:@name, position: @position }
-    
-  setup:  => @info()
+        
+  setup: => @info()
 
   joined: => @info()
   
