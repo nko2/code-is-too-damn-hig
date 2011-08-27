@@ -18,7 +18,8 @@
     "nko": "~0.1.1",
     "socket.io": "~0.7.9",
     "node-static": "~0.5.9",
-    "coffee-script": "~1.1.2"
+    "coffee-script": "~1.1.2",
+    "socket.io-client": "~0.7.9"
   },
   "devDependencies": {},
   "scripts": {
