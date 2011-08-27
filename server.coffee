@@ -1,11 +1,15 @@
 require.paths.unshift(__dirname+"/lib")
 require 'Connection'
+require "Redis"
+
 require('nko')('YOe/SzwxAmx8J0UC')
 #export NODE_ENV=production
 
 static = require 'node-static'
 http = require 'http'
 io = require 'socket.io'
+redis = require 'redis'
+global.REDIS = redis.createClient()
 
 port = process.env.PORT || 7777
 
