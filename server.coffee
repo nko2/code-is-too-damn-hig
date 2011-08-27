@@ -5,7 +5,7 @@ static = require 'node-static'
 http = require 'http'
 io = require 'socket.io'
 
-port = process.env.PORT || 7777
+port = 80 #process.env.PORT || 7777
 
 # HTTP Server
 file = new static.Server('./public')
