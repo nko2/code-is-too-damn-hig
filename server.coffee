@@ -14,7 +14,7 @@ port = 7777
 port = 80 if (process.env.NODE_ENV == 'production')
 
 # HTTP Server
-file = new static.Server('./public')
+file = new static.Server("#{__dirname}/public")
 server = http.createServer (request, response) ->
   request.addListener 'end', ->
     file.serve(request, response);
