@@ -1,3 +1,5 @@
+require.paths.unshift(__dirname+"/lib")
+require 'Connection'
 require('nko')('YOe/SzwxAmx8J0UC')
 #export NODE_ENV=production
 
@@ -21,4 +23,4 @@ websocket_server = io.listen(server)
 
 
 websocket_server.sockets.on "connection", (socket)->
-  console.log("Hello #{socket}")
+  new Connection(socket)
