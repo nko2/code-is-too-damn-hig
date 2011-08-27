@@ -1,6 +1,5 @@
 require.paths.unshift(__dirname+"/lib")
 require 'Connection'
-require "Redis"
 
 require('nko')('YOe/SzwxAmx8J0UC')
 #export NODE_ENV=production
@@ -12,15 +11,20 @@ redis = require 'redis'
 global.REDIS = redis.createClient()
 REDIS.flushall()
 
-port = process.env.PORT || 3000
+port = 3000
+port = 80 if (process.env.NODE_ENV == 'production')
 
-# HTTP Server
-file = new static.Server('./public/')
+file = new static.Server("#{__dirname}/public")
+
 server = http.createServer (request, response) ->
   request.addListener 'end', ->
     file.serve(request, response);
 
-server.listen(port);
+server.listen port, () ->
+  if process.getuid() == 0
+    require('fs').stat __filename, (err, stats) ->
+      return console.log(err) if (err)
+      process.setuid(stats.uid)
 console.log "Running http server at port #{port}"
 
 
