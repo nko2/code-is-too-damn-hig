@@ -1,19 +1,19 @@
-require.paths.unshift(__dirname+"/lib")
-require 'Connection'
-require "Redis"
-
-
 require('nko')('YOe/SzwxAmx8J0UC')
+require.paths.unshift(__dirname+"/lib")
+require 'extensions'
+require 'Connection'
+require 'Map'
+require 'Player'
+io = require 'socket.io'
+redis = require 'redis'
 express = require('express')
 #export NODE_ENV=production
 
-
-io = require 'socket.io'
-redis = require 'redis'
-
 global.REDIS = redis.createClient()
+REDIS.flushall()
 
-port = process.env.PORT || 7777
+port = 3000
+port = 80 if (process.env.NODE_ENV == 'production')
 
 app = express.createServer()
 
@@ -21,10 +21,9 @@ app.use(express.static("#{__dirname}/public"))
 
 app.listen(port)
 
-websocket = require('socket.io').listen(app)
+websocket_server.sockets.on "connection", (socket)->
+  connection = new Connection socket
+  
 
-websocket.sockets.on "connection", (socket)->
-  console.log "CONNECTION"
-  socket.emit "message", "FUCKING PIECE OF SHIT"
-  socket.emit "news", "NEWS PIECE OF SHIT"
+  
 
