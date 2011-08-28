@@ -28,6 +28,9 @@ class global.Map
       players: player.info() for player in all_players
     }
     
+  nextRound: ->
+    
+    socket_server.sockets.emit "setup", @getSetupData()
   # Singleton
   _instance = null  
   @instance: =>
