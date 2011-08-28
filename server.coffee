@@ -1,17 +1,20 @@
 require('nko')('YOe/SzwxAmx8J0UC')
 require.paths.unshift(__dirname+"/lib")
+
 require 'extensions'
-global._ = require('underscore')
 
 require 'Connection'
 require 'Map'
 require 'Player'
+
 io = require 'socket.io'
 redis = require 'redis'
 express = require('express')
 #export NODE_ENV=production
 
+global._ = require('underscore')
 global.REDIS = redis.createClient()
+
 REDIS.flushall()
 
 port = 3000
