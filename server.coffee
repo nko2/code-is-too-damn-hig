@@ -14,7 +14,6 @@ express = require('express')
 global.REDIS = redis.createClient()
 REDIS.flushall()
 
-
 port = 3000
 port = 80 if (process.env.NODE_ENV == 'production')
 
