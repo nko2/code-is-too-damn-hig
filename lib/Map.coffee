@@ -31,7 +31,7 @@ class global.Map
       "players" : players
     }
     
-  awardPoints: ->
+  awardScores: ->
     for player in @players
       for flower in @flowers
         if _.isEqual(player.position, flower) then player.score += 1
