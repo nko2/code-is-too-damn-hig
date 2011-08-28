@@ -22,6 +22,7 @@ socket.on("setup", function(data){
 
 socket.on("playerJoined", function(data){
   log(data.name + " joined at "+data.position[0]+","+data.position[1]+"!");
+  Boy.createBoy("", data);
 });
 
 socket.on("playerDisconnected", function(data){
@@ -49,15 +50,15 @@ var Boy = (function() {
 
 	return {
 		createBoy : function(name, player) {
+		  var isMyPlayer = (myName === name);
 			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision")
 			.attr({x: player.position[0]*16, 
 			      y: player.position[1]*16, 
 			      z: 1 , 
 			      score: player.score, 
 			      name: name, 
-			      isMain : true,
+			      isMain : isMyPlayer,
 			      moveLeft : false, moveRight : false, moveUp : false, moveDown : false})
-			.CustomControls(1)
 			.animate("walk_left", 6, 3, 8)
 			.animate("walk_right", 9, 3, 11)
 			.animate("walk_up", 3, 3, 5)
@@ -105,7 +106,11 @@ var Boy = (function() {
 			});
 
 			boylist.push(newPlayer);
-
+			
+      if(isMyPlayer) {
+        newPlayer.CustomControls(1);
+      }
+      
 			return newPlayer;
 		},
 		
@@ -316,7 +321,12 @@ function setupGame(setUpData) {
 		}
     
 
-    var mainPlayer = Boy.createBoy(myName, setUpData.players[myName]);
-		boylist.push(mainPlayer);
+    // var mainPlayer = Boy.createBoy(myName, setUpData.players[myName]);
+    
+    for(var player in setUpData.players) {
+      Boy.createBoy(player, setUpData.players[player]);
+    }
+    
+    // boylist.push(mainPlayer);
 	});
 }
