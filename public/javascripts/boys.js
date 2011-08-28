@@ -3,6 +3,21 @@ var myName = "";
 var boyList = [];
 var step = 0;
 var STEP_REQUIRED = 8;
+
+
+var availablePosition = function(position){
+  if(position[0] >= 23 || position[0] < 0 || position[1] >= 23 || position[1] < 0){
+    return false;
+  }
+  for(var boy in boyList) {
+    var playerBoy = boyList[boy];
+    if(playerBoy.tilePosition[0] == position[0] && playerBoy.tilePosition[1] == position[1]){
+      return false;
+    }
+  }  
+  return true;
+}
+
 window.onload = function() {
   myName = prompt("What is your name?");
   socket.emit("login", myName);
@@ -56,8 +71,9 @@ socket.on("playerMoved", function(data){
       else if(data.position[1] < tileY)
         playerBoy.stop().animate("walk_up", 16);
         
-      playerBoy.x = data.position[0] * 16;
-      playerBoy.y = data.position[1] * 16;
+      playerBoy.x = (data.position[0] * 16)+16;
+      playerBoy.y = (data.position[1] * 16)+16;
+      playerBoy.tilePosition = data.position;
     }
   }
 });
@@ -77,8 +93,8 @@ var Boy = (function() {
 		createBoy : function(name, player) {
 		  var isMyPlayer = (myName === name);
 			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision")
-			.attr({x: player.position[0]*16, 
-			      y: player.position[1]*16, 
+			.attr({x: (player.position[0]*16)+16, 
+			      y: (player.position[1]*16)+16, 
 			      z: 1 , 
 			      tilePosition : player.position,
 			      score: player.score, 
@@ -111,24 +127,8 @@ var Boy = (function() {
 			    this.stop();
 			  })
 			.collision()
-			.onHit("wall_left", function() {
-			  this.x += this._speed;
-			  this.stop();
-			  })
-			.onHit("wall_right", function() {
-			  this.x -= this._speed;
-			  this.stop();
-			  })
-			.onHit("wall_bottom", function() {
-			  this.y -= this._speed;
-			  this.stop();
-			  })
-			.onHit("wall_top", function() {
-			  this.y += this._speed;
-			  this.stop();
-			  })
 			.onHit("flower", function(hit) {
-        console.log("FUCK");
+        //console.log("FUCK");
 			});
 
 			boyList.push(newPlayer);
@@ -216,7 +216,7 @@ function setupGame(setUpData) {
 		    var flowerX = setUpData.flowersOnMap[i][0];
 		    var flowerY = setUpData.flowersOnMap[i][1];
          spot = Crafty.e("2D, Canvas, flower, SpriteAnimation")
-         .attr({x: flowerX * 16, y: flowerY * 16})
+         .attr({x: (flowerX * 16)+16, y: (flowerY * 16)+16})
          .animate("wind", 0, 1, 3)
          .bind("EnterFrame", function() {
            if(!this.isPlaying()) {
@@ -228,13 +228,13 @@ function setupGame(setUpData) {
 
 		//create the bushes along the x-axis which will form the boundaries
 		for(var i = 0; i < 25; i++) {
-			Crafty.e("2D, Canvas, wall_top, bush"+Crafty.randRange(1,2))
+			Crafty.e("2D, Canvas, bush"+Crafty.randRange(1,2))
 			.attr({
 				x : i * 16,
 				y : 0,
 				z : 2
 			});
-			Crafty.e("2D, Canvas, wall_bottom, bush"+Crafty.randRange(1,2))
+			Crafty.e("2D, Canvas, bush"+Crafty.randRange(1,2))
 			.attr({
 				x : i * 16,
 				y : 384,
@@ -245,13 +245,13 @@ function setupGame(setUpData) {
 		//create the bushes along the y-axis
 		//we need to start one more and one less to not overlap the previous bushes
 		for(var i = 1; i < 24; i++) {
-			Crafty.e("2D, Canvas, wall_left, bush"+Crafty.randRange(1,2))
+			Crafty.e("2D, Canvas, bush"+Crafty.randRange(1,2))
 			.attr({
 				x : 0,
 				y : i * 16,
 				z : 2
 			});
-			Crafty.e("2D, Canvas, wall_right, bush"+Crafty.randRange(1,2))
+			Crafty.e("2D, Canvas, bush"+Crafty.randRange(1,2))
 			.attr({
 				x : 384,
 				y : i * 16,
@@ -304,16 +304,16 @@ function setupGame(setUpData) {
 				//only move the player in one direction at a time (up/down/left/right)
 				  step++;
 				  if(step >= STEP_REQUIRED) {
-				    if(this.moveRight) this.x += this._speed;
-				    else if(this.moveLeft) this.x -= this._speed;
-				    else if(this.moveUp) this.y -= this._speed;
-				    else if(this.moveDown) this.y += this._speed;
-            var tileY = Math.floor(this.y / 16.0);
-            var tilyX = Math.floor(this.x / 16.0);
-            var tilePosition = [tilyX, tileY];
-            if( tilyX != this.tilePosition[0] || tileY != this.tilePosition[1] ){
-              this.tilePosition = tilePosition;  
-              socket.emit("moveTo", tilePosition); 
+				    var nextTile = [this.tilePosition[0], this.tilePosition[1]];
+				    if(this.moveRight)     nextTile[0]++;
+				    else if(this.moveLeft) nextTile[0]--;
+				    else if(this.moveUp)   nextTile[1]--;
+				    else if(this.moveDown) nextTile[1]++;
+            if((nextTile[0] != this.tilePosition[0] || nextTile[1] != this.tilePosition[1]) && availablePosition(nextTile)){
+              this.x = (nextTile[0] * 16)+16;
+              this.y = (nextTile[1] * 16)+16;
+              this.tilePosition = nextTile;  
+              socket.emit("moveTo", this.tilePosition); 
             }
             step = 0;
           }

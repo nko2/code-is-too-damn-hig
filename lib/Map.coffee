@@ -14,7 +14,7 @@ class global.Map
     @players.remove player
   
   canMoveTo: (position) ->
-    return false if !(@size > position[0] >= 0 && @size > position[1] >= 0)
+    return false if position[0] >= @size || position[0] < 0 || position[1] >= @size || position[1] < 0 
     found = _.detect @players, (player) ->
       _.isEqual(player.position, position)
     found == undefined # true if not found
