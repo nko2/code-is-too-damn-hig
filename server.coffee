@@ -29,5 +29,6 @@ global.socket_server.sockets.on "connection", (socket)->
 
 gameTick = ()->
   Map.instance().nextRound()
+  Connection.broadcastSetup()
   setTimeout (()-> gameTick()), 20000
 gameTick()

@@ -1,7 +1,7 @@
 class global.Map
   constructor: () ->
     @used_positions = []
-    @size = 2
+    @size = 8
     @players = []
     @flowers = []
     @timeleft = 0
@@ -13,7 +13,11 @@ class global.Map
   removePlayer: (player) ->
     @players.remove player
   
-  
+  canMoveTo: (position) ->
+    found = _.detect @players, (player) ->
+      _.isEqual(player.position, position)
+    found == undefined # true if not found
+    
   setRandomPlayerPositions: () ->
     player.setPosition(@getRandomPosition()) for player in @players
       
@@ -36,7 +40,6 @@ class global.Map
     @used_positions = []
     @setRandomPlayerPositions()
     @setRandomFlowerPositions()
-    socket_server.sockets.emit "setup", @getSetupData()
 
   #Private
   getRandomPosition: ()->
