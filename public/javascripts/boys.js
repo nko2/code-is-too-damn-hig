@@ -1,8 +1,5 @@
 var socket = io.connect('/');
 window.onload = function() {
-	
-	// ASK FOR PLAYER NAME AND REGISTER HIM THEN GO DOWN
-
   var myName = prompt("What is your name?");
   socket.emit("login", myName);
 
@@ -61,108 +58,52 @@ var Worker = (function() {
 			.animate("walk_up", 3, 3, 5)
 			.animate("walk_down", 0, 3, 2)
 			.bind("EnterFrame", function(e) {
-			if(this.moveLeft) {
-			if(!this.isPlaying("walk_left"))
-			this.stop().animate("walk_left", 16);
-			}
-			if(this.moveRight) {
-			if(!this.isPlaying("walk_right"))
-			this.stop().animate("walk_right", 16);
-			}
-			if(this.moveUp) {
-			if(!this.isPlaying("walk_up"))
-			this.stop().animate("walk_up", 16);
-			}
-			if(this.moveDown) {
-			if(!this.isPlaying("walk_down"))
-			this.stop().animate("walk_down", 16);
-			}
-			}).bind("KeyUp", function(e) {
-			this.stop();
-
-			})
+			  if(this.moveLeft) {
+			    if(!this.isPlaying("walk_left"))
+			      this.stop().animate("walk_left", 16);
+			    }
+			    if(this.moveRight) {
+			      if(!this.isPlaying("walk_right"))
+			        this.stop().animate("walk_right", 16);
+			    }
+			    if(this.moveUp) {
+			      if(!this.isPlaying("walk_up"))
+			        this.stop().animate("walk_up", 16);
+			    }
+			    if(this.moveDown) {
+			      if(!this.isPlaying("walk_down"))
+			        this.stop().animate("walk_down", 16);
+			    }
+			  })
+			.bind("KeyUp", function(e) {
+			    this.stop();
+			  })
 			.collision()
 			.onHit("wall_left", function() {
-			this.x += this._speed;
-			this.stop();
-			}).onHit("wall_right", function() {
-			this.x -= this._speed;
-			this.stop();
-			}).onHit("wall_bottom", function() {
-			this.y -= this._speed;
-			this.stop();
-			}).onHit("wall_top", function() {
-			this.y += this._speed;
-			this.stop();
-			}).onHit("flower", function(hit) {
-				if(Math.abs(hit[0].obj._x - this.x) < 3 & Math.abs(hit[0].obj._y - this.y) < 3) {
-					this.score += 1;
-					//score.text("Score: " + this.score + " " + this.x + "," + this.y + " hit: " + hit[0].obj._x + hit[0].obj._y + " " + this.id);
-					score.text("see score on the left");
-					Scorer.UpdateListing({
-						"id" : this.id,
-						"score" : this.score,
-						"rank" : this.rank
-					})
-
-					Crafty.audio.play("crank1");
-				}
-				//console.log(hit);
-				//choot = hit;
+			  this.x += this._speed;
+			  this.stop();
+			  })
+			.onHit("wall_right", function() {
+			  this.x -= this._speed;
+			  this.stop();
+			  })
+			.onHit("wall_bottom", function() {
+			  this.y -= this._speed;
+			  this.stop();
+			  })
+			.onHit("wall_top", function() {
+			  this.y += this._speed;
+			  this.stop();
+			  })
+			.onHit("flower", function(hit) {
+        console.log("FUCK");
 			});
+
 			workerlist.push(newPlayer);
 
 			return newPlayer;
 		},
-		addWorker : function(data) {
-			var newPlayer = Crafty.e("2D, Canvas, player, SpriteAnimation, Collision")
-			.attr({x: data["x"], y: data["y"], z: 1 , score: data["score"], id: data["id"], isMain : data["isMain"], rank : data["rank"], moveLeft : false, moveRight : false, moveUp : false, moveDown : false})
-			.animate("walk_left", 6, 3, 8)
-			.animate("walk_right", 9, 3, 11)
-			.animate("walk_up", 3, 3, 5)
-			.animate("walk_down", 0, 3, 2)
-			.bind("EnterFrame", function(e) {
-			if(this.moveLeft) {
-			if(!this.isPlaying("walk_left"))
-			this.stop().animate("walk_left", 16);
-			}
-			if(this.moveRight) {
-			if(!this.isPlaying("walk_right"))
-			this.stop().animate("walk_right", 16);
-			}
-			if(this.moveUp) {
-			if(!this.isPlaying("walk_up"))
-			this.stop().animate("walk_up", 16);
-			}
-			if(this.moveDown) {
-			if(!this.isPlaying("walk_down"))
-			this.stop().animate("walk_down", 16);
-			}
-			}).bind("KeyUp", function(e) {
-			this.stop();
-
-			})
-			.collision()
-			.onHit("wall_left", function() {
-			this.x += this._speed;
-			this.stop();
-			}).onHit("wall_right", function() {
-			this.x -= this._speed;
-			this.stop();
-			}).onHit("wall_bottom", function() {
-			this.y -= this._speed;
-			this.stop();
-			}).onHit("wall_top", function() {
-			this.y += this._speed;
-			this.stop();
-			}).onHit("flower", function(hit) {
-			  console.log("I am on a flower motherfucker");
-			});
-			workerlist.push(newPlayer);
-
-			return newPlayer;
-			
-		},
+		
 		isMainWorker : function() {
 			return this.isMain;
 		},
@@ -191,45 +132,11 @@ var Worker = (function() {
 
 })();
 
-var Scorer = (function() {
-	var counter = 0;
-	return {
-		SetupListing : function(options) {
-			//make a baby
-			//alert (options["playerId"] + " " + options["rank"] + " " + options["name"] + " " + options["score"]);
-
-			var listItem = document.createElement("li");
-			listItem.id = options["id"];
-			var value = "<div class='fighter'><label name='position' class='rank'>" + options["rank"] + "</label><label name='playerName' class='name'>" + options["id"] + "</label><label name='score' class='score'>" + options["score"] + "</label></div>"
-			listItem.innerHTML = value;
-			return listItem;
-
-		},
-		AddListing : function(listItem) {
-			var scoreboard = document.querySelector("#ScoreBoard ul");
-			scoreboard.appendChild(listItem);
-		},
-		UpdateListing : function(options) {
-			var item = options["id"];
-			var rank = document.querySelector("#" + item + " .rank");
-			var name = document.querySelector("#" + item + " .name");
-			var score = document.querySelector("#" + item + " .score");
-			rank.innerText = options["rank"];
-			name.innerText = options["id"];
-			score.innerText = options["score"];
-		}
-	}
-
-})();
 
 function setupGame(player) {
-	WIDTH = 400;
-	HEIGHT = 400;
 
-	Crafty.init(WIDTH, HEIGHT);
-	//Crafty.canvas.init();
+	Crafty.init(400, 400);
 
-	//turn the sprite map into usable components
 	Crafty.sprite(16, "/images/sprite.png", {
 		grass1 : [0, 0],
 		grass2 : [1, 0],
@@ -259,7 +166,7 @@ function setupGame(player) {
 				//1/40 chance of drawing a flower and only within the bushes
 				if(i > 0 && i < 24 && j > 0 && j < 24 && Crafty.randRange(0, 30) > 29) {
 					spot = Crafty.e("2D, Canvas, flower, SpriteAnimation")
-					.attr({x: i * 16, y: j * 16})
+					.attr({x: i * 16, y: j * 16, z: 2})
 					.animate("wind", 0, 1, 3)
 					.bind("EnterFrame", function() {
 						if(!this.isPlaying()) {
@@ -377,12 +284,6 @@ function setupGame(player) {
 				});
 				return this;
 			}
-		});
-		score = Crafty.e("2D, DOM, Text")
-		.text("Score: 0")
-		.attr({x: Crafty.viewport.width - 300, y: Crafty.viewport.height - 50, w: 200, h:50, total:0})
-		.css({
-			color : "#fff"
 		});
 
 		var pData = {
