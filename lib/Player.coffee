@@ -13,7 +13,7 @@ class global.Player
       cb(isValid)
   
   setPosition: (data) =>
-    @position = parseInt(i) for i in data
+    @position = (parseInt(i) for i in data)
     
   
   disconnected: () =>

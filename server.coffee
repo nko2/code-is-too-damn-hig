@@ -20,8 +20,7 @@ app = express.createServer()
 app.use(express.static("#{__dirname}/public"))
 
 app.listen(port)
-
-websocket_server.sockets.on "connection", (socket)->
+io.listen(app).sockets.on "connection", (socket)->
   connection = new Connection socket
   
 
