@@ -139,7 +139,7 @@ var Boy = (function() {
 			$("#ScoreBoard ul li").each(function(){
 		    var self = $(this);
 		    var score = parseInt(self.find(".score").html());
-		    console.log(score);
+		    
 		    
 		    if(!inserted && score < newPlayer.score){
 		      self.before(playerRow);
