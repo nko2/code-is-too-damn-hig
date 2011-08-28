@@ -93,7 +93,7 @@ var Boy = (function() {
 	return {
 		createBoy : function(name, player) {
 		  var isMyPlayer = (myName === name);
-			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision")
+			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision, Tint")
 			.attr({x: (player.position[0]*16)+16, 
 			      y: (player.position[1]*16)+16, 
 			      z: 1 , 
@@ -133,10 +133,29 @@ var Boy = (function() {
 			});
 
 			boyList.push(newPlayer);
-			$("#ScoreBoard ul").append($("<li>").addClass(newPlayer.name).html(newPlayer.name + " - " + newPlayer.score));
+
+			var playerRow = $("<li>").addClass(newPlayer.name).append($("<div>").addClass("name").html(newPlayer.name)).append($("<div>").addClass("score").html(newPlayer.score));
+			var inserted = false;
+			$("#ScoreBoard ul li").each(function(){
+		    var self = $(this);
+		    var score = parseInt(self.find(".score").html());
+		    
+		    
+		    if(!inserted && score < newPlayer.score){
+		      self.before(playerRow);
+		      inserted = true;
+		    }
+			});
+			if(!inserted){
+			  $("#ScoreBoard ul").append(playerRow);
+			}
+			
 			
       if(isMyPlayer) {
         newPlayer.CustomControls(16);
+        newPlayer.tint("#000000", 0)
+      }else{
+        newPlayer.tint("#70c8a0", 0.4);
       }
       
 			return newPlayer;
