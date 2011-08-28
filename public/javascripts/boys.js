@@ -1,9 +1,5 @@
-/**
- * @author Balach Hussain
- */
-
 window.onload = function() {
-	//start crafty
+
 	WIDTH = 400;
 	HEIGHT = 320;
 
@@ -11,7 +7,7 @@ window.onload = function() {
 	//Crafty.canvas.init();
 
 	//turn the sprite map into usable components
-	Crafty.sprite(16, "sprite.png", {
+	Crafty.sprite(16, "/images/sprite.png", {
 		grass1 : [0, 0],
 		grass2 : [1, 0],
 		grass3 : [2, 0],
@@ -88,9 +84,9 @@ window.onload = function() {
 		Crafty.audio.MAX_CHANNELS = 16;
 
 		Crafty.audio.add({
-			ticker : ["sounds/clock-ticking-3.wav", "sounds/clock-ticking-3.mp3"],
-			crank1 : ["sounds/crank-1.wav", "sounds/crank-1.mp3"],
-			crank2 : ["sounds/crank-2.wav", "sounds/crank-2.mp3"],
+			ticker : ["/sounds/clock-ticking-3.wav", "/sounds/clock-ticking-3.mp3"],
+			crank1 : ["/sounds/crank-1.wav", "/sounds/crank-1.mp3"],
+			crank2 : ["/sounds/crank-2.wav", "/sounds/crank-2.mp3"],
 
 		});
 
