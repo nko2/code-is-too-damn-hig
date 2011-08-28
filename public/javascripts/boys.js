@@ -93,7 +93,7 @@ var Boy = (function() {
 	return {
 		createBoy : function(name, player) {
 		  var isMyPlayer = (myName === name);
-			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision")
+			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision, Tint")
 			.attr({x: (player.position[0]*16)+16, 
 			      y: (player.position[1]*16)+16, 
 			      z: 1 , 
@@ -153,6 +153,9 @@ var Boy = (function() {
 			
       if(isMyPlayer) {
         newPlayer.CustomControls(16);
+        newPlayer.tint("#000000", 0)
+      }else{
+        newPlayer.tint("#70c8a0", 0.4);
       }
       
 			return newPlayer;
