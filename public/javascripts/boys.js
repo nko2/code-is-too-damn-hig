@@ -133,7 +133,22 @@ var Boy = (function() {
 			});
 
 			boyList.push(newPlayer);
-			$("#ScoreBoard ul").append($("<li>").addClass(newPlayer.name).append($("<div>").addClass("name").html(newPlayer.name)).append($("<div>").addClass("score").html(newPlayer.score)));
+
+			var playerRow = $("<li>").addClass(newPlayer.name).append($("<div>").addClass("name").html(newPlayer.name)).append($("<div>").addClass("score").html(newPlayer.score));
+			var inserted = false;
+			$("#ScoreBoard ul li").each(function(){
+		    var self = $(this);
+		    var score = parseInt(self.find(".score").html());
+		    console.log(score);
+		    
+		    if(!inserted && score < newPlayer.score){
+		      self.before(playerRow);
+		      inserted = true;
+		    }
+			});
+			if(!inserted){
+			  $("#ScoreBoard ul").append(playerRow);
+			}
 			
 			
       if(isMyPlayer) {
