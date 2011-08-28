@@ -23,7 +23,7 @@ class global.Map
     player.moveTo(@getRandomPosition()) for player in @players
       
   setRandomFlowerPositions: ->
-    @flowers = for i in [1..10]
+    @flowers = for i in [1..Math.ceil(@players.length/1.5)]
       @getRandomPosition()
       
   getSetupData: ->

@@ -43,5 +43,5 @@ gameTick = ()->
   Map.instance().awardScores()
   Map.instance().nextRound()
   Connection.broadcastSetup()
-  setTimeout (()-> gameTick()), 20000
+  setTimeout (()-> gameTick()), 10000
 gameTick()
