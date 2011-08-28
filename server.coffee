@@ -19,7 +19,11 @@ port = 80 if (process.env.NODE_ENV == 'production')
 
 app = express.createServer()
 
-app.use(express.static("#{__dirname}/public"))
+publicDir = "#{__dirname}/public/"
+coffeeDir = "#{__dirname}/game/"
+jsDir = "#{publicDir}/javascripts/"
+app.use express.compiler(src: coffeeDir, dest: jsDir, enable: ['coffeescript'])
+app.use express.static(publicDir)
 
 app.listen(port)
 global.socket_server = io.listen(app)

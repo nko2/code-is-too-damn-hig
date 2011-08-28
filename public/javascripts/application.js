@@ -1,4 +1,3 @@
-
 var position;
 var socket = io.connect('/');
 var myName = prompt("What is your name?");
