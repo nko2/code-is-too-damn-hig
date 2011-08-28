@@ -34,10 +34,10 @@ global.socket_server.sockets.on "connection", (socket)->
   connection = new Connection socket
   
 
-for i in [1..5]
-  bot = new Bot
-  bot.name = "Bot #{i}"
-  Map.instance().addPlayer bot
+# for i in [1..5]
+#   bot = new Bot
+#   bot.name = "Bot #{i}"
+#   Map.instance().addPlayer bot
 
 gameTick = ()->
   Map.instance().awardScores()

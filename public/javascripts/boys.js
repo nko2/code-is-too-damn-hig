@@ -1,6 +1,8 @@
 var socket = io.connect('/');
 var myName = "";
 var boyList = [];
+var step = 0;
+var STEP_REQUIRED = 8;
 window.onload = function() {
   myName = prompt("What is your name?");
   socket.emit("login", myName);
@@ -60,6 +62,7 @@ var Boy = (function() {
 			.attr({x: player.position[0]*16, 
 			      y: player.position[1]*16, 
 			      z: 1 , 
+			      tilePosition : player.position,
 			      score: player.score, 
 			      name: name, 
 			      isMain : isMyPlayer,
@@ -113,7 +116,7 @@ var Boy = (function() {
 			boyList.push(newPlayer);
 			
       if(isMyPlayer) {
-        newPlayer.CustomControls(1);
+        newPlayer.CustomControls(16);
       }
       
 			return newPlayer;
@@ -198,7 +201,7 @@ function setupGame(setUpData) {
 		    var flowerX = setUpData.flowersOnMap[i][0];
 		    var flowerY = setUpData.flowersOnMap[i][1];
          spot = Crafty.e("2D, Canvas, flower, SpriteAnimation")
-         .attr({x: flowerX * 16, y: flowerY * 16, z: 2})
+         .attr({x: flowerX * 16, y: flowerY * 16})
          .animate("wind", 0, 1, 3)
          .bind("EnterFrame", function() {
            if(!this.isPlaying()) {
@@ -284,20 +287,32 @@ function setupGame(setUpData) {
 				this.bind('EnterFrame', function() {
 				//move the player in a direction depending on the booleans
 				//only move the player in one direction at a time (up/down/left/right)
-				if(this.moveRight) this.x += this._speed;
-				else if(this.moveLeft) this.x -= this._speed;
-				else if(this.moveUp) this.y -= this._speed;
-				else if(this.moveDown) this.y += this._speed;
-        
+				  step++;
+				  if(step >= STEP_REQUIRED) {
+				    if(this.moveRight) this.x += this._speed;
+				    else if(this.moveLeft) this.x -= this._speed;
+				    else if(this.moveUp) this.y -= this._speed;
+				    else if(this.moveDown) this.y += this._speed;
+            var tileY = Math.floor(this.y / 16.0);
+            var tilyX = Math.floor(this.x / 16.0);
+            var tilePosition = [tilyX, tileY];
+            if( tilyX != this.tilePosition[0] || tileY != this.tilePosition[1] ){
+              this.tilePosition = tilePosition;  
+              socket.emit("moveTo", tilePosition); 
+            }
+            step = 0;
+          }
+          
+          
 				}).bind('KeyDown', function(e) {
 				//default movement booleans to false
-				this.moveRight = this.moveLeft = this.moveDown = this.moveDown = false;
+				  this.moveRight = this.moveLeft = this.moveDown = this.moveDown = false;
 
 				//if keys are down, set the direction
-				if(e.keyCode === Crafty.keys.RIGHT_ARROW) this.moveRight = true;
-				if(e.keyCode === Crafty.keys.LEFT_ARROW) this.moveLeft = true;
-				if(e.keyCode === Crafty.keys.UP_ARROW) this.moveUp = true;
-				if(e.keyCode === Crafty.keys.DOWN_ARROW) this.moveDown = true;
+				  if(e.keyCode === Crafty.keys.RIGHT_ARROW) this.moveRight = true;
+				  if(e.keyCode === Crafty.keys.LEFT_ARROW) this.moveLeft = true;
+				  if(e.keyCode === Crafty.keys.UP_ARROW) this.moveUp = true;
+				  if(e.keyCode === Crafty.keys.DOWN_ARROW) this.moveDown = true;
 
 				}).bind('KeyUp', function(e) {
 					//if key is released, stop moving
