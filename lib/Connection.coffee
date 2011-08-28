@@ -10,8 +10,12 @@ class global.Connection
       @player.setName data, @validateName
 
     @socket.on "setPosition", (data) =>
-      @player.setPosition(data)
-      @socket.broadcast.emit("playerMoved", @player.moved())
+      position = (parseInt(i) for i in data)
+      if Map.instance().canMoveTo(position)
+        @player.setPosition(data)
+        @socket.broadcast.emit("playerMoved", @player.moved())
+      else
+        @socket.emit("playerMoved", @player.moved())
       
     
   
@@ -22,3 +26,6 @@ class global.Connection
       @socket.broadcast.emit("playerJoined", @player.joined())
     else
       @socket.emit("setName", "false")
+
+  @broadcastSetup: ->
+    socket_server.sockets.emit "setup", Map.instance().getSetupData()

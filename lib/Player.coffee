@@ -1,8 +1,9 @@
 class global.Player
    
   constructor: (@socket) ->
-    @position = [13,51]
+    @position = [0,0]
     @score = 0
+
   
   setName: (name, cb) ->
     REDIS.sadd "player:names", name, (error, resp) =>
@@ -11,8 +12,8 @@ class global.Player
         @name = name
       cb(isValid)
   
-  setPosition: (data) =>
-    @position = (parseInt(i) for i in data)
+  setPosition: (position) =>
+    @position = position
     
   
   disconnected: () =>
