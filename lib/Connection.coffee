@@ -3,7 +3,7 @@ class global.Connection
   constructor: (@socket) ->
     
     @socket.on "disconnect", =>
-      if @player then @socket.broadcast.emit("playerDisconnected", @player.disconnected())    
+      if @player then @socket.broadcast.emit("playerDisconnected", @player.disconnected())
             
     @socket.on "login", (name) =>
       @player = new Player()

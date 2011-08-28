@@ -1,16 +1,15 @@
 class global.Bot extends Player
   constructor: ->
-    @flower = null
-    setTimeout =>
-      @aiMove()
-    , (Math.random()*500) + 200
     super()
+    @flower = null
+    @isBot = true
+    @destroyed = false
     
   aiMove: ()->
     @flower = _.detect Map.instance().flowers, (f) =>
       _.isEqual(f, @flower)
     @flower ||= @randomFlowerPosition()
-    
+
     if !_.isEqual(@position, @flower)
       to = [@position[0],@position[1]] 
       if to[0] != @flower[0]
@@ -23,12 +22,15 @@ class global.Bot extends Player
           to[1]++
         else
           to[1]--
+
       if !_.isEqual(to, @position) && Map.instance().canMoveTo(to)
         this.moveTo(to)
         socket_server.sockets.emit "playerMoved", @moved()
-    setTimeout =>
-      @aiMove()
-    , (Math.random()*500) + 200
+        
+    if !@destroyed
+      setTimeout =>
+        @aiMove()
+      , (Math.random()*500) + 200
 
 
   # Private
