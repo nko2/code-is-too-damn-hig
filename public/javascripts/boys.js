@@ -60,8 +60,8 @@ socket.on("playerMoved", function(data){
   for(var boy in boyList) {
     var playerBoy = boyList[boy];
     if(playerBoy.name === data.name) {
-      var tileX = Math.floor(playerBoy.x / 16.0);
-      var tileY = Math.floor(playerBoy.y / 16.0);
+      var tileX = playerBoy.tilePosition[0];
+      var tileY = playerBoy.tilePosition[1];
       if(data.position[0] > tileX ) 
         playerBoy.stop().animate("walk_right", 16);
       else if(data.position[0] < tileX)
