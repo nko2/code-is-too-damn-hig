@@ -6,7 +6,7 @@ class global.Connection
       if @player then @socket.broadcast.emit("playerDisconnected", @player.disconnected())    
             
     @socket.on "login", (name) =>
-      @player = new Player(@socket)
+      @player = new Player()
       @player.login name, (valid) =>
         if valid
           Map.instance().addPlayer(@player)

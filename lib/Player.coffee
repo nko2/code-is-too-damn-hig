@@ -1,6 +1,6 @@
 class global.Player
    
-  constructor: (@socket) ->
+  constructor: () ->
     @position = [0,0]
     @score = 0
 

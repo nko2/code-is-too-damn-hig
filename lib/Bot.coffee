@@ -4,6 +4,7 @@ class global.Bot extends Player
     setTimeout =>
       @aiMove()
     , (Math.random()*500) + 200
+    super()
     
   aiMove: ()->
     @flower = _.detect Map.instance().flowers, (f) =>
