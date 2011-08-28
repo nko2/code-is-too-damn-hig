@@ -31,6 +31,9 @@ socket.on("playerDisconnected", function(data){
 
 socket.on("playerMoved", function(data){
   log(data.name + " moved to "+data.position[0]+","+data.position[1]+"!");
+  if(data.name === myName){
+    position = data.position;
+  }
 });
 
 socket.on("setName", function(data) {
