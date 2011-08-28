@@ -18,6 +18,7 @@ socket.on("name", function(data){
 });
 
 socket.on("setup", function(data){
+  boyList = [];
   setupGame(data);
   log("You joined!");
   log("Received setup: "+ JSON.stringify(data));
@@ -30,6 +31,12 @@ socket.on("playerJoined", function(data){
 
 socket.on("playerDisconnected", function(data){
   log(data + " left!");
+    for(var boy in boyList) {
+    var playerBoy = boyList[boy];
+      if(playerBoy.name === data.name) {
+        playerBoy.destroy();
+      }
+    }
 });
 
 
@@ -37,7 +44,18 @@ socket.on("playerMoved", function(data){
   log(data.name + " moved to "+data.position[0]+","+data.position[1]+"!");
   for(var boy in boyList) {
     var playerBoy = boyList[boy];
-    if(playerBoy.name == data.name) {
+    if(playerBoy.name === data.name) {
+      var tileX = Math.floor(playerBoy.x / 16.0);
+      var tileY = Math.floor(playerBoy.y / 16.0);
+      if(data.position[0] > tileX ) 
+        playerBoy.stop().animate("walk_right", 16);
+      else if(data.position[0] < tileX)
+        playerBoy.stop().animate("walk_left", 16);
+      else if(data.position[1] > tileY)
+        playerBoy.stop().animate("walk_down", 16);
+      else if(data.position[1] < tileY)
+        playerBoy.stop().animate("walk_up", 16);
+        
       playerBoy.x = data.position[0] * 16;
       playerBoy.y = data.position[1] * 16;
     }
@@ -128,9 +146,6 @@ var Boy = (function() {
 		stopBoy : function(player) {
 			player.moveLeft = player.moveDown = player.moveUp = player.moveRight = false;
 			//Crafty.trigger("KeyUp");
-		},
-		killBoy : function(player) {
-			player.destroy();
 		},
 		moveBoy : function(player, dir) {
 
