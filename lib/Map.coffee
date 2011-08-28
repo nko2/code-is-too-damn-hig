@@ -6,20 +6,20 @@ class global.Map
     @timeleft = 0
   
   addPlayer: (player) ->
-    player.setPosition(this.getRandomPosition())
+    player.setPosition(@getRandomPosition())
     @players.push player
     
   removePlayer: (player) ->
     @players.remove player
   
-  getRandomPosition: ()->
-    x = Math.floor(Math.random() * (@size - 1))
-    y = Math.floor(Math.random() * (@size - 1))
-    [x,y]
+  
+  setRandomPlayerPositions: () ->
+    player.setPosition(@getRandomPosition()) for player in @players
       
-  setRandomFlowers: ->
+  setRandomFlowerPositions: ->
     @flowers = for i in [1..10]
-      this.getRandomPosition()
+      [10,10]
+    @flowers = _.uniq(@flowers)
       
   getSetupData: ->
     all_players = @players
@@ -33,8 +33,16 @@ class global.Map
     }
     
   nextRound: ->
-    
+    @setRandomPlayerPositions()
+    @setRandomFlowerPositions()
     socket_server.sockets.emit "setup", @getSetupData()
+
+  #Private
+  getRandomPosition: ()->
+    x = Math.floor(Math.random() * (@size - 1))
+    y = Math.floor(Math.random() * (@size - 1))
+    [x,y]
+
   # Singleton
   _instance = null  
   @instance: =>

@@ -1,6 +1,8 @@
 require('nko')('YOe/SzwxAmx8J0UC')
 require.paths.unshift(__dirname+"/lib")
 require 'extensions'
+global._ = require('underscore')
+
 require 'Connection'
 require 'Map'
 require 'Player'
