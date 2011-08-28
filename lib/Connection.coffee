@@ -22,11 +22,3 @@ class global.Connection
       @socket.broadcast.emit("playerJoined", @player.joined())
     else
       @socket.emit("setName", "false")
-
-
-  
-      
-    
-
-  
-    
