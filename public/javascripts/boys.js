@@ -1,6 +1,228 @@
-
+var socket = io.connect('/');
 window.onload = function() {
+	
+	// ASK FOR PLAYER NAME AND REGISTER HIM THEN GO DOWN
 
+  var myName = prompt("What is your name?");
+  socket.emit("login", myName);
+
+var log = function(text){
+  $("#log ul").prepend($("<li>").html(text));
+}
+
+socket.on("name", function(data){
+  if(data==="false"){
+    log("You are not accepted!");
+  }
+});
+
+socket.on("setup", function(data){
+  player = data["players"][myName]
+  setupGame(player);
+  log("You joined!");
+  log("Received setup: "+ JSON.stringify(data));
+});
+
+socket.on("playerJoined", function(data){
+  log(data.name + " joined at "+data.position[0]+","+data.position[1]+"!");
+});
+
+socket.on("playerDisconnected", function(data){
+  log(data + " left!");
+});
+
+
+socket.on("playerMoved", function(data){
+  log(data.name + " moved to "+data.position[0]+","+data.position[1]+"!");
+  if(data.name === myName){
+    position = data.position;
+  }
+});
+
+socket.on("invalidName", function(data) {
+  myName = prompt("What is your name?");
+  socket.emit("login", myName);
+});
+
+
+}
+var workerlist = [];
+
+var Worker = (function() {
+
+	return {
+		createWorker : function(player) {
+			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision")
+			.attr({x: player.position[0]*16, y: player.position[1]*16, z: 1 , score: player.score, name: player.name, isMain : true,
+			  moveLeft : false, moveRight : false, moveUp : false, moveDown : false})
+			.CustomControls(1)
+			.animate("walk_left", 6, 3, 8)
+			.animate("walk_right", 9, 3, 11)
+			.animate("walk_up", 3, 3, 5)
+			.animate("walk_down", 0, 3, 2)
+			.bind("EnterFrame", function(e) {
+			if(this.moveLeft) {
+			if(!this.isPlaying("walk_left"))
+			this.stop().animate("walk_left", 16);
+			}
+			if(this.moveRight) {
+			if(!this.isPlaying("walk_right"))
+			this.stop().animate("walk_right", 16);
+			}
+			if(this.moveUp) {
+			if(!this.isPlaying("walk_up"))
+			this.stop().animate("walk_up", 16);
+			}
+			if(this.moveDown) {
+			if(!this.isPlaying("walk_down"))
+			this.stop().animate("walk_down", 16);
+			}
+			}).bind("KeyUp", function(e) {
+			this.stop();
+
+			})
+			.collision()
+			.onHit("wall_left", function() {
+			this.x += this._speed;
+			this.stop();
+			}).onHit("wall_right", function() {
+			this.x -= this._speed;
+			this.stop();
+			}).onHit("wall_bottom", function() {
+			this.y -= this._speed;
+			this.stop();
+			}).onHit("wall_top", function() {
+			this.y += this._speed;
+			this.stop();
+			}).onHit("flower", function(hit) {
+				if(Math.abs(hit[0].obj._x - this.x) < 3 & Math.abs(hit[0].obj._y - this.y) < 3) {
+					this.score += 1;
+					//score.text("Score: " + this.score + " " + this.x + "," + this.y + " hit: " + hit[0].obj._x + hit[0].obj._y + " " + this.id);
+					score.text("see score on the left");
+					Scorer.UpdateListing({
+						"id" : this.id,
+						"score" : this.score,
+						"rank" : this.rank
+					})
+
+					Crafty.audio.play("crank1");
+				}
+				//console.log(hit);
+				//choot = hit;
+			});
+			workerlist.push(newPlayer);
+
+			return newPlayer;
+		},
+		addWorker : function(data) {
+			var newPlayer = Crafty.e("2D, Canvas, player, SpriteAnimation, Collision")
+			.attr({x: data["x"], y: data["y"], z: 1 , score: data["score"], id: data["id"], isMain : data["isMain"], rank : data["rank"], moveLeft : false, moveRight : false, moveUp : false, moveDown : false})
+			.animate("walk_left", 6, 3, 8)
+			.animate("walk_right", 9, 3, 11)
+			.animate("walk_up", 3, 3, 5)
+			.animate("walk_down", 0, 3, 2)
+			.bind("EnterFrame", function(e) {
+			if(this.moveLeft) {
+			if(!this.isPlaying("walk_left"))
+			this.stop().animate("walk_left", 16);
+			}
+			if(this.moveRight) {
+			if(!this.isPlaying("walk_right"))
+			this.stop().animate("walk_right", 16);
+			}
+			if(this.moveUp) {
+			if(!this.isPlaying("walk_up"))
+			this.stop().animate("walk_up", 16);
+			}
+			if(this.moveDown) {
+			if(!this.isPlaying("walk_down"))
+			this.stop().animate("walk_down", 16);
+			}
+			}).bind("KeyUp", function(e) {
+			this.stop();
+
+			})
+			.collision()
+			.onHit("wall_left", function() {
+			this.x += this._speed;
+			this.stop();
+			}).onHit("wall_right", function() {
+			this.x -= this._speed;
+			this.stop();
+			}).onHit("wall_bottom", function() {
+			this.y -= this._speed;
+			this.stop();
+			}).onHit("wall_top", function() {
+			this.y += this._speed;
+			this.stop();
+			}).onHit("flower", function(hit) {
+			  console.log("I am on a flower motherfucker");
+			});
+			workerlist.push(newPlayer);
+
+			return newPlayer;
+			
+		},
+		isMainWorker : function() {
+			return this.isMain;
+		},
+		stopWorker : function(player) {
+			player.moveLeft = player.moveDown = player.moveUp = player.moveRight = false;
+			//Crafty.trigger("KeyUp");
+		},
+		killWorker : function(player) {
+			player.destroy();
+		},
+		moveWorker : function(player, dir) {
+
+			player.moveLeft = player.moveDown = player.moveUp = player.moveRight = false;
+
+			if(dir === "left")
+				player.moveLeft = true;
+			else if(dir === "right")
+				player.moveRight = true;
+			else if(dir === "up")
+				player.moveUp = true;
+			else if(dir === "down")
+				player.moveDown = true;
+
+		}
+	}
+
+})();
+
+var Scorer = (function() {
+	var counter = 0;
+	return {
+		SetupListing : function(options) {
+			//make a baby
+			//alert (options["playerId"] + " " + options["rank"] + " " + options["name"] + " " + options["score"]);
+
+			var listItem = document.createElement("li");
+			listItem.id = options["id"];
+			var value = "<div class='fighter'><label name='position' class='rank'>" + options["rank"] + "</label><label name='playerName' class='name'>" + options["id"] + "</label><label name='score' class='score'>" + options["score"] + "</label></div>"
+			listItem.innerHTML = value;
+			return listItem;
+
+		},
+		AddListing : function(listItem) {
+			var scoreboard = document.querySelector("#ScoreBoard ul");
+			scoreboard.appendChild(listItem);
+		},
+		UpdateListing : function(options) {
+			var item = options["id"];
+			var rank = document.querySelector("#" + item + " .rank");
+			var name = document.querySelector("#" + item + " .name");
+			var score = document.querySelector("#" + item + " .score");
+			rank.innerText = options["rank"];
+			name.innerText = options["id"];
+			score.innerText = options["score"];
+		}
+	}
+
+})();
+
+function setupGame(player) {
 	WIDTH = 400;
 	HEIGHT = 400;
 
@@ -82,20 +304,6 @@ window.onload = function() {
 			});
 		}
 
-		Crafty.audio.MAX_CHANNELS = 16;
-
-		Crafty.audio.add({
-			ticker : ["/sounds/clock-ticking-3.wav", "/sounds/clock-ticking-3.mp3"],
-			crank1 : ["/sounds/crank-1.wav", "/sounds/crank-1.mp3"],
-			crank2 : ["/sounds/crank-2.wav", "/sounds/crank-2.mp3"],
-
-		});
-
-		Crafty.audio.settings("crank1", {
-			"preload" : "true",
-			"loopback" : false
-		});
-
 	};
 
 	//end generateWorld()
@@ -103,7 +311,7 @@ window.onload = function() {
 	//the loading screen that will display while our assets load
 	Crafty.scene("loading", function() {
 		//load takes an array of assets and a callback when complete
-		Crafty.load(["sprite.png"], function() {
+		Crafty.load(["/images/sprite.png"], function() {
 			Crafty.scene("main");
 			//when everything is loaded, run the main scene
 		});
@@ -143,7 +351,7 @@ window.onload = function() {
 				else if(this.moveLeft) this.x -= this._speed;
 				else if(this.moveUp) this.y -= this._speed;
 				else if(this.moveDown) this.y += this._speed;
-
+        
 				}).bind('KeyDown', function(e) {
 				//default movement booleans to false
 				this.moveRight = this.moveLeft = this.moveDown = this.moveDown = false;
@@ -186,91 +394,7 @@ window.onload = function() {
 			"isMain" : true
 		}
 
-		var mainPlayer = Worker.createWorker(pData);
+		var mainPlayer = Worker.createWorker(player);
 		workerlist.push(mainPlayer);
-		var item = Scorer.SetupListing(pData);
-		Scorer.AddListing(item);
 	});
-};
-
-var workerlist = [];
-
-var Worker = (function() {
-
-	return {
-		createWorker : function(data) {
-			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision")
-			.attr({x: data["x"], y: data["y"], z: 1 , score: data["score"], id: data["id"], isMain : data["isMain"], rank : data["rank"], moveLeft : false, moveRight : false, moveUp : false, moveDown : false})
-			.CustomControls(1)
-			.animate("walk_left", 6, 3, 8)
-			.animate("walk_right", 9, 3, 11)
-			.animate("walk_up", 3, 3, 5)
-			.animate("walk_down", 0, 3, 2)
-			.bind("EnterFrame", function(e) {
-			if(this.moveLeft) {
-			if(!this.isPlaying("walk_left"))
-			this.stop().animate("walk_left", 16);
-			}
-			if(this.moveRight) {
-			if(!this.isPlaying("walk_right"))
-			this.stop().animate("walk_right", 16);
-			}
-			if(this.moveUp) {
-			if(!this.isPlaying("walk_up"))
-			this.stop().animate("walk_up", 16);
-			}
-			if(this.moveDown) {
-			if(!this.isPlaying("walk_down"))
-			this.stop().animate("walk_down", 16);
-			}
-			}).bind("KeyUp", function(e) {
-			  this.stop();
-			})
-			.collision()
-			.onHit("wall_left", function() {
-			this.x += this._speed;
-			this.stop();
-			}).onHit("wall_right", function() {
-			this.x -= this._speed;
-			this.stop();
-			}).onHit("wall_bottom", function() {
-			this.y -= this._speed;
-			this.stop();
-			}).onHit("wall_top", function() {
-			this.y += this._speed;
-			this.stop();
-			}).onHit("flower", function(hit) {
-			  console.log("I am on a flower bitch");
-			});
-			workerlist.push(newPlayer);
-
-			return newPlayer;
-		},
-		isMainWorker : function() {
-			return this.isMain;
-		},
-		stopWorker : function(player) {
-			player.moveLeft = player.moveDown = player.moveUp = player.moveRight = false;
-			//Crafty.trigger("KeyUp");
-		},
-		killWorker : function(player) {
-			player.destroy();
-		},
-		moveWorker : function(player, dir) {
-
-			player.moveLeft = player.moveDown = player.moveUp = player.moveRight = false;
-
-			if(dir === "left")
-				player.moveLeft = true;
-			else if(dir === "right")
-				player.moveRight = true;
-			else if(dir === "up")
-				player.moveUp = true;
-			else if(dir === "down")
-				player.moveDown = true;
-
-		}
-	}
-
-})();
-
+}
