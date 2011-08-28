@@ -52,6 +52,7 @@ socket.on("playerDisconnected", function(data){
         playerBoy.destroy();
       }
     }
+  $("."+data).remove();
 });
 
 
@@ -132,6 +133,7 @@ var Boy = (function() {
 			});
 
 			boyList.push(newPlayer);
+			$("#ScoreBoard ul").append($("<li>").addClass(newPlayer.name).html(newPlayer.name + " - " + newPlayer.score));
 			
       if(isMyPlayer) {
         newPlayer.CustomControls(16);
@@ -346,6 +348,7 @@ function setupGame(setUpData) {
 			}
 		});
     
+    $("#ScoreBoard ul").html("")
     for(var player in setUpData.players) {
       Boy.createBoy(player, setUpData.players[player]);
     }
