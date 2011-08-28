@@ -28,13 +28,14 @@ class global.Map
       
   getSetupData: ->
     all_players = @players
-    players = {}
+    players_data = {}
+    
     for player in all_players
-      players[player.name] = {position : player.position, score: player.score}
+      players_data[player.name] = {position : player.position, score: player.score}
     {
       timeLeft: @timeleft, 
       flowersOnMap: @flowers,
-      "players" : players
+      "players" : players_data
     }
     
   awardScores: ->
