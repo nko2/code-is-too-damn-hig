@@ -1,5 +1,6 @@
 var socket = io.connect('/');
 var myName = "";
+var boyList = [];
 window.onload = function() {
   myName = prompt("What is your name?");
   socket.emit("login", myName);
@@ -32,8 +33,12 @@ socket.on("playerDisconnected", function(data){
 
 socket.on("playerMoved", function(data){
   log(data.name + " moved to "+data.position[0]+","+data.position[1]+"!");
-  if(data.name === myName){
-    position = data.position;
+  for(var boy in boyList) {
+    var playerBoy = boyList[boy];
+    if(playerBoy.name == data.name) {
+      playerBoy.x = data.position[0] * 16;
+      playerBoy.y = data.position[1] * 16;
+    }
   }
 });
 
@@ -44,7 +49,7 @@ socket.on("invalidName", function(data) {
 
 
 }
-var boylist = [];
+
 
 var Boy = (function() {
 
@@ -105,7 +110,7 @@ var Boy = (function() {
         console.log("FUCK");
 			});
 
-			boylist.push(newPlayer);
+			boyList.push(newPlayer);
 			
       if(isMyPlayer) {
         newPlayer.CustomControls(1);
@@ -310,23 +315,10 @@ function setupGame(setUpData) {
 				return this;
 			}
 		});
-
-		var pData = {
-			"id" : "albert",
-			"x" : 160,
-			"y" : 140,
-			"score" : 50,
-			"rank" : 1,
-			"isMain" : true
-		}
-    
-
-    // var mainPlayer = Boy.createBoy(myName, setUpData.players[myName]);
     
     for(var player in setUpData.players) {
       Boy.createBoy(player, setUpData.players[player]);
     }
     
-    // boylist.push(mainPlayer);
 	});
 }
