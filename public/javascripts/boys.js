@@ -41,17 +41,18 @@ socket.on("setup", function(data){
 
 socket.on("playerJoined", function(data){
   log(data.name + " joined at "+data.position[0]+","+data.position[1]+"!");
-  Boy.createBoy("", data);
+  Boy.createBoy(data.name, data);
 });
 
 socket.on("playerDisconnected", function(data){
   log(data + " left!");
     for(var boy in boyList) {
     var playerBoy = boyList[boy];
-      if(playerBoy.name === data.name) {
+      if(playerBoy.name === data) {
         playerBoy.destroy();
       }
     }
+  $("."+data).remove();
 });
 
 
@@ -92,7 +93,7 @@ var Boy = (function() {
 	return {
 		createBoy : function(name, player) {
 		  var isMyPlayer = (myName === name);
-			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision")
+			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision, Tint")
 			.attr({x: (player.position[0]*16)+16, 
 			      y: (player.position[1]*16)+16, 
 			      z: 1 , 
@@ -132,9 +133,29 @@ var Boy = (function() {
 			});
 
 			boyList.push(newPlayer);
+
+			var playerRow = $("<li>").addClass(newPlayer.name).append($("<div>").addClass("name").html(newPlayer.name)).append($("<div>").addClass("score").html(newPlayer.score));
+			var inserted = false;
+			$("#ScoreBoard ul li").each(function(){
+		    var self = $(this);
+		    var score = parseInt(self.find(".score").html());
+		    
+		    
+		    if(!inserted && score < newPlayer.score){
+		      self.before(playerRow);
+		      inserted = true;
+		    }
+			});
+			if(!inserted){
+			  $("#ScoreBoard ul").append(playerRow);
+			}
+			
 			
       if(isMyPlayer) {
         newPlayer.CustomControls(16);
+        newPlayer.tint("#000000", 0)
+      }else{
+        newPlayer.tint("#70c8a0", 0.4);
       }
       
 			return newPlayer;
@@ -346,6 +367,7 @@ function setupGame(setUpData) {
 			}
 		});
     
+    $("#ScoreBoard ul").html("")
     for(var player in setUpData.players) {
       Boy.createBoy(player, setUpData.players[player]);
     }

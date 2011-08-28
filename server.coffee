@@ -34,14 +34,16 @@ global.socket_server.sockets.on "connection", (socket)->
   connection = new Connection socket
   
 
-# for i in [1..5]
-#   bot = new Bot
-#   bot.name = "Bot #{i}"
-#   Map.instance().addPlayer bot
 
 gameTick = ()->
+  if Map.instance().humanPlayers().length == 1
+    if Map.instance().botPlayers().length == 0 
+      Map.instance().addBots()
+  else
+    Map.instance().removeBots()
+    
   Map.instance().awardScores()
   Map.instance().nextRound()
   Connection.broadcastSetup()
-  setTimeout (()-> gameTick()), 20000
+  setTimeout (()-> gameTick()), 5000
 gameTick()

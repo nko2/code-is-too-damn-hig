@@ -1,8 +1,9 @@
 class global.Player
    
-  constructor: (@socket) ->
+  constructor: () ->
     @position = [0,0]
     @score = 0
+    @isBot = false
 
   
   login: (name, cb) ->

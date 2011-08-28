@@ -5,7 +5,32 @@ class global.Map
     @players = []
     @flowers = []
     @timeleft = 0
+
+
+      
+  botPlayers: () ->
+    _.select @players, (player) ->
+      player.isBot
+      
+
+  humanPlayers: () ->
+    _.select @players, (player) ->
+      !player.isBot
+      
   
+  addBots:(nBots = 2) ->
+    for i in [1..nBots]
+      bot = new Bot
+      bot.name = "Bot-#{i}"
+      Map.instance().addPlayer bot
+      bot.aiMove()
+        
+  removeBots:() ->
+    for bot in @botPlayers()
+      bot.destroyed = true
+      @removePlayer(bot)
+
+
   addPlayer: (player) ->
     player.moveTo(@getRandomPosition())
     @players.push player
@@ -23,7 +48,7 @@ class global.Map
     player.moveTo(@getRandomPosition()) for player in @players
       
   setRandomFlowerPositions: ->
-    @flowers = for i in [1..10]
+    @flowers = for i in [1..Math.ceil(@players.length/1.5)]
       @getRandomPosition()
       
   getSetupData: ->
