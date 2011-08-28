@@ -48,7 +48,7 @@ socket.on("playerDisconnected", function(data){
   log(data + " left!");
     for(var boy in boyList) {
     var playerBoy = boyList[boy];
-      if(playerBoy.name === data.name) {
+      if(playerBoy.name === data) {
         playerBoy.destroy();
       }
     }
