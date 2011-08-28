@@ -1,6 +1,7 @@
 var socket = io.connect('/');
+var myName = "";
 window.onload = function() {
-  var myName = prompt("What is your name?");
+  myName = prompt("What is your name?");
   socket.emit("login", myName);
 
 var log = function(text){
@@ -14,8 +15,7 @@ socket.on("name", function(data){
 });
 
 socket.on("setup", function(data){
-  player = data["players"][myName]
-  setupGame(player);
+  setupGame(data);
   log("You joined!");
   log("Received setup: "+ JSON.stringify(data));
 });
@@ -43,15 +43,20 @@ socket.on("invalidName", function(data) {
 
 
 }
-var workerlist = [];
+var boylist = [];
 
-var Worker = (function() {
+var Boy = (function() {
 
 	return {
-		createWorker : function(player) {
+		createBoy : function(name, player) {
 			var newPlayer = Crafty.e("2D, Canvas, player, Keyboard, CustomControls, SpriteAnimation, Collision")
-			.attr({x: player.position[0]*16, y: player.position[1]*16, z: 1 , score: player.score, name: player.name, isMain : true,
-			  moveLeft : false, moveRight : false, moveUp : false, moveDown : false})
+			.attr({x: player.position[0]*16, 
+			      y: player.position[1]*16, 
+			      z: 1 , 
+			      score: player.score, 
+			      name: name, 
+			      isMain : true,
+			      moveLeft : false, moveRight : false, moveUp : false, moveDown : false})
 			.CustomControls(1)
 			.animate("walk_left", 6, 3, 8)
 			.animate("walk_right", 9, 3, 11)
@@ -99,22 +104,22 @@ var Worker = (function() {
         console.log("FUCK");
 			});
 
-			workerlist.push(newPlayer);
+			boylist.push(newPlayer);
 
 			return newPlayer;
 		},
 		
-		isMainWorker : function() {
+		isMainBoy : function() {
 			return this.isMain;
 		},
-		stopWorker : function(player) {
+		stopBoy : function(player) {
 			player.moveLeft = player.moveDown = player.moveUp = player.moveRight = false;
 			//Crafty.trigger("KeyUp");
 		},
-		killWorker : function(player) {
+		killBoy : function(player) {
 			player.destroy();
 		},
-		moveWorker : function(player, dir) {
+		moveBoy : function(player, dir) {
 
 			player.moveLeft = player.moveDown = player.moveUp = player.moveRight = false;
 
@@ -133,7 +138,7 @@ var Worker = (function() {
 })();
 
 
-function setupGame(player) {
+function setupGame(setUpData) {
 
 	Crafty.init(400, 400);
 
@@ -164,18 +169,33 @@ function setupGame(player) {
 				});
 
 				//1/40 chance of drawing a flower and only within the bushes
-				if(i > 0 && i < 24 && j > 0 && j < 24 && Crafty.randRange(0, 30) > 29) {
-					spot = Crafty.e("2D, Canvas, flower, SpriteAnimation")
-					.attr({x: i * 16, y: j * 16, z: 2})
-					.animate("wind", 0, 1, 3)
-					.bind("EnterFrame", function() {
-						if(!this.isPlaying()) {
-							this.animate("wind", 40);
-						}
-					});
-				}
+        //         if(i > 0 && i < 24 && j > 0 && j < 24 && Crafty.randRange(0, 30) > 29) {
+        //          spot = Crafty.e("2D, Canvas, flower, SpriteAnimation")
+        //          .attr({x: i * 16, y: j * 16, z: 2})
+        //          .animate("wind", 0, 1, 3)
+        //          .bind("EnterFrame", function() {
+        //            if(!this.isPlaying()) {
+        //              this.animate("wind", 40);
+        //            }
+        //          });
+        //         
+        // }
 
 			}
+		}
+		for(var i = 0; i < setUpData.flowersOnMap.length; i++){
+
+		    var flowerX = setUpData.flowersOnMap[i][0];
+		    var flowerY = setUpData.flowersOnMap[i][1];
+         spot = Crafty.e("2D, Canvas, flower, SpriteAnimation")
+         .attr({x: flowerX * 16, y: flowerY * 16, z: 2})
+         .animate("wind", 0, 1, 3)
+         .bind("EnterFrame", function() {
+           if(!this.isPlaying()) {
+             this.animate("wind", 40);
+           }
+         });
+		  
 		}
 
 		//create the bushes along the x-axis which will form the boundaries
@@ -294,8 +314,9 @@ function setupGame(player) {
 			"rank" : 1,
 			"isMain" : true
 		}
+    
 
-		var mainPlayer = Worker.createWorker(player);
-		workerlist.push(mainPlayer);
+    var mainPlayer = Boy.createBoy(myName, setUpData.players[myName]);
+		boylist.push(mainPlayer);
 	});
 }

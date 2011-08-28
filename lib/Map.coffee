@@ -1,7 +1,7 @@
 class global.Map
   constructor: () ->
     @used_positions = []
-    @size = 8
+    @size = 23
     @players = []
     @flowers = []
     @timeleft = 0
