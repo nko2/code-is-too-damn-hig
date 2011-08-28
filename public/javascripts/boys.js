@@ -41,7 +41,7 @@ socket.on("setup", function(data){
 
 socket.on("playerJoined", function(data){
   log(data.name + " joined at "+data.position[0]+","+data.position[1]+"!");
-  Boy.createBoy("", data);
+  Boy.createBoy(data.name, data);
 });
 
 socket.on("playerDisconnected", function(data){
