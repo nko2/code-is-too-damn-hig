@@ -19,19 +19,23 @@ class global.Map
   setRandomFlowerPositions: ->
     @flowers = for i in [1..10]
       [10,10]
-    @flowers = _.uniq(@flowers)
       
   getSetupData: ->
     all_players = @players
     players = {}
     for player in all_players
-      players[player.name] = player.position
+      players[player.name] = {position : player.position, score: player.score}
     {
       timeLeft: @timeleft, 
       flowersOnMap: @flowers,
       "players" : players
     }
     
+  awardPoints: ->
+    for player in @players
+      for flower in @flowers
+        if _.isEqual(player.position, flower) then player.score += 1
+  
   nextRound: ->
     @setRandomPlayerPositions()
     @setRandomFlowerPositions()

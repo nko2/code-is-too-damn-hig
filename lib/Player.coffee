@@ -2,6 +2,7 @@ class global.Player
    
   constructor: (@socket) ->
     @position = [13,51]
+    @score = 0
   
   setName: (name, cb) ->
     REDIS.sadd "player:names", name, (error, resp) =>

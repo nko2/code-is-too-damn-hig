@@ -29,6 +29,7 @@ global.socket_server.sockets.on "connection", (socket)->
   
 
 gameTick = ()->
+  Map.instance().awardPoints()
   Map.instance().nextRound()
   setTimeout (()-> gameTick()), 20000
 gameTick()

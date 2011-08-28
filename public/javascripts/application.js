@@ -15,7 +15,7 @@ socket.on("name", function(data){
 });
 
 socket.on("setup", function(data){
-  position = data["players"][myName];
+  position = data["players"][myName]["position"];
   log("You joined!");
   log("Received setup: "+ JSON.stringify(data));
 });
