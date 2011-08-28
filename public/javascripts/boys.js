@@ -2,7 +2,7 @@
 window.onload = function() {
 
 	WIDTH = 400;
-	HEIGHT = 320;
+	HEIGHT = 400;
 
 	Crafty.init(WIDTH, HEIGHT);
 	//Crafty.canvas.init();
@@ -26,7 +26,7 @@ window.onload = function() {
 		//generate the grass along the x-axis
 		for(var i = 0; i < 25; i++) {
 			//generate the grass along the y-axis
-			for(var j = 0; j < 20; j++) {
+			for(var j = 0; j < 25; j++) {
 				grassType = Crafty.randRange(1, 4);
 				Crafty.e("2D, Canvas, grass"+grassType)
 				.attr({
@@ -35,7 +35,7 @@ window.onload = function() {
 				});
 
 				//1/40 chance of drawing a flower and only within the bushes
-				if(i > 0 && i < 24 && j > 0 && j < 19 && Crafty.randRange(0, 30) > 29) {
+				if(i > 0 && i < 24 && j > 0 && j < 24 && Crafty.randRange(0, 30) > 29) {
 					spot = Crafty.e("2D, Canvas, flower, SpriteAnimation")
 					.attr({x: i * 16, y: j * 16})
 					.animate("wind", 0, 1, 3)
@@ -60,14 +60,14 @@ window.onload = function() {
 			Crafty.e("2D, Canvas, wall_bottom, bush"+Crafty.randRange(1,2))
 			.attr({
 				x : i * 16,
-				y : 304,
+				y : 384,
 				z : 2
 			});
 		}
 
 		//create the bushes along the y-axis
 		//we need to start one more and one less to not overlap the previous bushes
-		for(var i = 1; i < 19; i++) {
+		for(var i = 1; i < 24; i++) {
 			Crafty.e("2D, Canvas, wall_left, bush"+Crafty.randRange(1,2))
 			.attr({
 				x : 0,
@@ -224,8 +224,7 @@ var Worker = (function() {
 			this.stop().animate("walk_down", 16);
 			}
 			}).bind("KeyUp", function(e) {
-			this.stop();
-
+			  this.stop();
 			})
 			.collision()
 			.onHit("wall_left", function() {
@@ -241,20 +240,7 @@ var Worker = (function() {
 			this.y += this._speed;
 			this.stop();
 			}).onHit("flower", function(hit) {
-				if(Math.abs(hit[0].obj._x - this.x) < 3 & Math.abs(hit[0].obj._y - this.y) < 3) {
-					this.score += 1;
-					//score.text("Score: " + this.score + " " + this.x + "," + this.y + " hit: " + hit[0].obj._x + hit[0].obj._y + " " + this.id);
-					score.text("see score on the left");
-					Scorer.UpdateListing({
-						"id" : this.id,
-						"score" : this.score,
-						"rank" : this.rank
-					})
-
-					Crafty.audio.play("crank1");
-				}
-				//console.log(hit);
-				//choot = hit;
+			  console.log("I am on a flower bitch");
 			});
 			workerlist.push(newPlayer);
 
@@ -288,34 +274,3 @@ var Worker = (function() {
 
 })();
 
-var Scorer = (function() {
-	var counter = 0;
-	return {
-		SetupListing : function(options) {
-			//make a baby
-			//alert (options["playerId"] + " " + options["rank"] + " " + options["name"] + " " + options["score"]);
-
-			var listItem = document.createElement("li");
-			listItem.id = options["id"];
-			listItem.style.height = "50px";
-			var value = "<div class='fighter'><label name='position' class='rank' style='margin-left:5px;'>" + options["rank"] + "</label><label name='playerName' class='name' style='margin-left:5px;'>" + options["id"] + "</label><label name='score' class='score' style='margin-left:5px;'>" + options["score"] + "</label></div>"
-			listItem.innerHTML = value;
-			return listItem;
-
-		},
-		AddListing : function(listItem) {
-			var scoreboard = document.querySelector("#ScoreBoard ul");
-			scoreboard.appendChild(listItem);
-		},
-		UpdateListing : function(options) {
-			var item = options["id"];
-			var rank = document.querySelector("#" + item + " .rank");
-			var name = document.querySelector("#" + item + " .name");
-			var score = document.querySelector("#" + item + " .score");
-			rank.innerText = options["rank"];
-			name.innerText = options["id"];
-			score.innerText = options["score"];
-		}
-	}
-
-})();

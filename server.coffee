@@ -20,9 +20,8 @@ port = 80 if (process.env.NODE_ENV == 'production')
 app = express.createServer()
 
 publicDir = "#{__dirname}/public/"
-coffeeDir = "#{__dirname}/game/"
-jsDir = "#{publicDir}/javascripts/"
-app.use express.compiler(src: coffeeDir, dest: jsDir, enable: ['coffeescript'])
+# // coffeeDir = "#{__dirname}/game/"
+# // app.use express.compiler(src: coffeeDir, dest: publicDir, enable: ['coffeescript'])
 app.use express.static(publicDir)
 
 app.listen(port)
