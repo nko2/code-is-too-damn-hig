@@ -17,6 +17,7 @@ class global.Connection
   
   validateName : (valid) =>
     if valid
+      Map.instance().addPlayer(@player)
       @socket.emit("setup", Map.instance().getSetupData())
       @socket.broadcast.emit("playerJoined", @player.joined())
     else

@@ -6,6 +6,7 @@ class global.Map
     @timeleft = 0
   
   addPlayer: (player) ->
+    player.setPosition(this.getRandomPosition())
     @players.push player
     
   removePlayer: (player) ->
@@ -22,10 +23,13 @@ class global.Map
       
   getSetupData: ->
     all_players = @players
+    players = {}
+    for player in all_players
+      players[player.name] = player.position
     {
       timeLeft: @timeleft, 
-      flowersOnMap: @flowers, 
-      players: player.info() for player in all_players
+      flowersOnMap: @flowers,
+      "players" : players
     }
     
   # Singleton

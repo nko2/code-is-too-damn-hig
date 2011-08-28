@@ -8,8 +8,6 @@ class global.Player
       isValid = (parseInt(resp) == 1)
       if isValid 
         @name = name
-        @valid = true
-        Map.instance().addPlayer(this)
       cb(isValid)
   
   setPosition: (data) =>
