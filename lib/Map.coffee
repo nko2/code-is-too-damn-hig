@@ -7,19 +7,20 @@ class global.Map
     @timeleft = 0
   
   addPlayer: (player) ->
-    player.setPosition(@getRandomPosition())
+    player.moveTo(@getRandomPosition())
     @players.push player
     
   removePlayer: (player) ->
     @players.remove player
   
   canMoveTo: (position) ->
+    return false if !(@size > position[0] >= 0 && @size > position[1] >= 0)
     found = _.detect @players, (player) ->
       _.isEqual(player.position, position)
     found == undefined # true if not found
     
   setRandomPlayerPositions: () ->
-    player.setPosition(@getRandomPosition()) for player in @players
+    player.moveTo(@getRandomPosition()) for player in @players
       
   setRandomFlowerPositions: ->
     @flowers = for i in [1..10]

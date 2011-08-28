@@ -1,7 +1,7 @@
 var position;
 var socket = io.connect('/');
 var myName = prompt("What is your name?");
-socket.emit("setName", myName);
+socket.emit("login", myName);
 
 var log = function(text){
   $("#log ul").prepend($("<li>").html(text));
@@ -35,31 +35,31 @@ socket.on("playerMoved", function(data){
   }
 });
 
-socket.on("setName", function(data) {
+socket.on("invalidName", function(data) {
   myName = prompt("What is your name?");
-  socket.emit("setName", myName);
+  socket.emit("login", myName);
 });
 
 
 $(document).keydown(function(e){
     if (e.keyCode == 37) {
        position[0] -= 1
-       socket.emit("setPosition", position); 
+       socket.emit("moveTo", position); 
        return false;
     }
     if (e.keyCode == 38) {
        position[1] -= 1
-       socket.emit("setPosition", position); 
+       socket.emit("moveTo", position); 
        return false;
     }
     if (e.keyCode == 39) {
        position[0] += 1
-       socket.emit("setPosition", position); 
+       socket.emit("moveTo", position); 
        return false;
     }
     if (e.keyCode == 40) {
        position[1] += 1
-       socket.emit("setPosition", position); 
+       socket.emit("moveTo", position); 
        return false;
     }
 });

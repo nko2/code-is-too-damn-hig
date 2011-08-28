@@ -5,14 +5,14 @@ class global.Player
     @score = 0
 
   
-  setName: (name, cb) ->
+  login: (name, cb) ->
     REDIS.sadd "player:names", name, (error, resp) =>
       isValid = (parseInt(resp) == 1)
       if isValid 
         @name = name
       cb(isValid)
   
-  setPosition: (position) =>
+  moveTo: (position) =>
     @position = position
     
   
