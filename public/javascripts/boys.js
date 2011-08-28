@@ -133,7 +133,8 @@ var Boy = (function() {
 			});
 
 			boyList.push(newPlayer);
-			$("#ScoreBoard ul").append($("<li>").addClass(newPlayer.name).html(newPlayer.name + " - " + newPlayer.score));
+			$("#ScoreBoard ul").append($("<li>").addClass(newPlayer.name).append($("<div>").addClass("name").html(newPlayer.name)).append($("<div>").addClass("score").html(newPlayer.score)));
+			
 			
       if(isMyPlayer) {
         newPlayer.CustomControls(16);

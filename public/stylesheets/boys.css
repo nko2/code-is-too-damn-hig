@@ -2,6 +2,20 @@ body { margin:0; padding: 0; overflow:hidden; font-family:Arial; font-size:20px 
 
 #cr-stage { border:2px solid black; margin:5px auto; color:white }
 
+#ScoreBoard{
+  background: #444444; 
+  height: 320px; 
+  width: 20%; 
+  float: left;
+  color: white;
+}
+
 #ScoreBoard ul li{
   list-style-type: none;
+}
+#ScoreBoard ul li .name, #ScoreBoard ul li .score{
+  display: inline;
+}
+#ScoreBoard ul li .name{
+  margin-right: 20px;
 }
